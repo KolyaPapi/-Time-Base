@@ -1,0 +1,32 @@
+pragma solidity ^0.8.0;
+
+contract TokenVesting {
+    address public beneficiary;
+    uint256 public totalTokens;
+    uint256 public releaseStart;
+    uint256 public releaseInterval;
+    uint256 public releasedTokens;
+
+    constructor(address _beneficiary, uint256 _totalTokens, uint256 _releaseStart, uint256 _releaseInterval) {
+        beneficiary = _beneficiary;
+        totalTokens = _totalTokens;
+        releaseStart = _releaseStart;
+        releaseInterval = _releaseInterval;
+        releasedTokens = 0;
+    }
+
+    function releaseTokens() public {
+        require(block.timestamp >= releaseStart, "Release has not started yet.");
+
+        uint256 releaseAmount = (block.timestamp - releaseStart) / releaseInterval;
+        releaseAmount -= releasedTokens;
+        releaseAmount = releaseAmount > totalTokens ? totalTokens : releaseAmount;
+
+        require(releaseAmount > 0, "No tokens available for release.");
+
+        releasedTokens += releaseAmount;
+
+        // Transfer releaseAmount tokens to the beneficiary
+        // ...
+    }
+}
